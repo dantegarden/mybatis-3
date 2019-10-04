@@ -1,13 +1,21 @@
 MyBatis SQL Mapper Framework for Java
 =====================================
+克隆自[官方仓库](https://github.com/mybatis/mybatis-3) 3.4.x分支，目前版本是3.4.7
 
-[![Build Status](https://travis-ci.org/mybatis/mybatis-3.svg?branch=master)](https://travis-ci.org/mybatis/mybatis-3)
-[![Coverage Status](https://coveralls.io/repos/mybatis/mybatis-3/badge.svg?branch=master&service=github)](https://coveralls.io/github/mybatis/mybatis-3?branch=master)
-[![Dependency Status](https://www.versioneye.com/user/projects/56199c04a193340f320005d3/badge.svg?style=flat)](https://www.versioneye.com/user/projects/56199c04a193340f320005d3)
-[![Maven central](https://maven-badges.herokuapp.com/maven-central/org.mybatis/mybatis/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.mybatis/mybatis)
-[![License](http://img.shields.io/:license-apache-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
-[![Stack Overflow](http://img.shields.io/:stack%20overflow-mybatis-brightgreen.svg)](http://stackoverflow.com/questions/tagged/mybatis)
-[![Project Stats](https://www.openhub.net/p/mybatis/widgets/project_thin_badge.gif)](https://www.openhub.net/p/mybatis)
+根据本人阅读源码的理解，对关键的组件添加了注释信息
+
+可在根目录运行以下命令，将jar包安装到本地仓库
+```
+mvn clean install -Dmaven.test.skip=true 
+```
+然后通过在pom中添加以下信息，引入此依赖
+```
+<dependency>
+    <groupId>org.mybatis</groupId>
+    <artifactId>mybatis</artifactId>
+    <version>3.4.7-mine</version>
+</dependency>
+```
 
 ![mybatis](http://mybatis.github.io/images/mybatis-logo.png)
 
