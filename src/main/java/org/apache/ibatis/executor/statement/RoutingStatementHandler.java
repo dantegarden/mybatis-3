@@ -29,20 +29,20 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
-/**
+/**Executor真正实例化的StatementHandler实现类，他使用了静态代理模式，根据MappedStatement.statementType决定真正干活的是哪个StatementHandler实现类
  * @author Clinton Begin
  */
 public class RoutingStatementHandler implements StatementHandler {
 
-  private final StatementHandler delegate;
+  private final StatementHandler delegate; //封装的真正的statementHandler对象，被代理对象
 
   public RoutingStatementHandler(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
-
+    //RoutingStatementHandler最主要的功能就是根据mappedStatement.statementType，来生成一个对应的StatementHandler实现类的对象，并赋值给delegate
     switch (ms.getStatementType()) {
       case STATEMENT:
         delegate = new SimpleStatementHandler(executor, ms, parameter, rowBounds, resultHandler, boundSql);
         break;
-      case PREPARED:
+      case PREPARED: //默认，statementType不配的话进这里
         delegate = new PreparedStatementHandler(executor, ms, parameter, rowBounds, resultHandler, boundSql);
         break;
       case CALLABLE:
@@ -54,6 +54,7 @@ public class RoutingStatementHandler implements StatementHandler {
 
   }
 
+  /**只是转发给被代理对象而已***/
   @Override
   public Statement prepare(Connection connection, Integer transactionTimeout) throws SQLException {
     return delegate.prepare(connection, transactionTimeout);

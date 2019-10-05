@@ -81,15 +81,18 @@ public class SimpleStatementHandler extends BaseStatementHandler {
     return resultSetHandler.<E>handleCursorResultSets(statement);
   }
 
+  /**使用底层的connection.statement来创建Statement**/
   @Override
   protected Statement instantiateStatement(Connection connection) throws SQLException {
     if (mappedStatement.getResultSetType() != null) {
+      //设置结果集是否可以滚动，以及其游标是否可以上下移动，设置结果集是否可更新
       return connection.createStatement(mappedStatement.getResultSetType().getValue(), ResultSet.CONCUR_READ_ONLY);
     } else {
       return connection.createStatement();
     }
   }
 
+  /**Statement没有预编译，也没有占位符**/
   @Override
   public void parameterize(Statement statement) throws SQLException {
     // N/A

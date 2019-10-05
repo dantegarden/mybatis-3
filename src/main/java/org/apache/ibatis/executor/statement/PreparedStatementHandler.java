@@ -59,9 +59,9 @@ public class PreparedStatementHandler extends BaseStatementHandler {
 
   @Override
   public <E> List<E> query(Statement statement, ResultHandler resultHandler) throws SQLException {
-    PreparedStatement ps = (PreparedStatement) statement;
-    ps.execute();
-    return resultSetHandler.<E> handleResultSets(ps);
+    PreparedStatement ps = (PreparedStatement) statement; //转成PreparedStatement
+    ps.execute(); //执行sql
+    return resultSetHandler.<E> handleResultSets(ps); //处理结果集
   }
 
   @Override
@@ -71,23 +71,30 @@ public class PreparedStatementHandler extends BaseStatementHandler {
     return resultSetHandler.<E> handleCursorResultSets(ps);
   }
 
+  /**使用底层的connection.prepareStatement来创建PreparedStatement**/
   @Override
   protected Statement instantiateStatement(Connection connection) throws SQLException {
     String sql = boundSql.getSql();
-    if (mappedStatement.getKeyGenerator() instanceof Jdbc3KeyGenerator) {
+    //根据mappedStatement.getKeyGenerator()创建prepareStatement
+    if (mappedStatement.getKeyGenerator() instanceof Jdbc3KeyGenerator) { //对于insert语句
       String[] keyColumnNames = mappedStatement.getKeyColumns();
       if (keyColumnNames == null) {
+        //返回PreparedStatement对象,数据库生成的主键
         return connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
       } else {
+        //返回PreparedStatement对象，数据库生成的主键填充到keyColumnNames中指定的列
         return connection.prepareStatement(sql, keyColumnNames);
       }
     } else if (mappedStatement.getResultSetType() != null) {
+      //设置结果集是否可以滚动，以及其游标是否可以上下移动，设置结果集是否可更新
       return connection.prepareStatement(sql, mappedStatement.getResultSetType().getValue(), ResultSet.CONCUR_READ_ONLY);
     } else {
+      //创建普通的PreparedStatement对象
       return connection.prepareStatement(sql);
     }
   }
 
+  /**使用parameterHandler对sql语句的占位符进行处理**/
   @Override
   public void parameterize(Statement statement) throws SQLException {
     parameterHandler.setParameters((PreparedStatement) statement);

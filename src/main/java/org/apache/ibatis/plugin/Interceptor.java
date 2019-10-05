@@ -21,11 +21,11 @@ import java.util.Properties;
  * @author Clinton Begin
  */
 public interface Interceptor {
-
+  //执行拦截逻辑的方法
   Object intercept(Invocation invocation) throws Throwable;
-
+  //target是被拦截对象，它的作用就是给被拦截的对象生成一个代理对象
   Object plugin(Object target);
-
+  //读取在plugin中设置的参数
   void setProperties(Properties properties);
 
 }

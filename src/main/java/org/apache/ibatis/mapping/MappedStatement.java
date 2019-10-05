@@ -289,6 +289,7 @@ public final class MappedStatement {
   }
   
   public BoundSql getBoundSql(Object parameterObject) {
+    //根据MappedStatement对象的信息和入参，生成完整的BoundSql对象（含sql、占位符、占位参数名、实际参数）
     BoundSql boundSql = sqlSource.getBoundSql(parameterObject);
     List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
     if (parameterMappings == null || parameterMappings.isEmpty()) {

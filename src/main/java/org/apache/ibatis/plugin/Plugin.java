@@ -29,9 +29,11 @@ import org.apache.ibatis.reflection.ExceptionUtil;
  * @author Clinton Begin
  */
 public class Plugin implements InvocationHandler {
-
+  //封装的真正提供服务的对象，被代理对象
   private final Object target;
+  //自定义的拦截器
   private final Interceptor interceptor;
+  //解析@Intercepts注解得到的signature信息
   private final Map<Class<?>, Set<Method>> signatureMap;
 
   private Plugin(Object target, Interceptor interceptor, Map<Class<?>, Set<Method>> signatureMap) {
@@ -39,12 +41,14 @@ public class Plugin implements InvocationHandler {
     this.interceptor = interceptor;
     this.signatureMap = signatureMap;
   }
-
+  //静态方法，用于帮助Interceptor生成动态代理
   public static Object wrap(Object target, Interceptor interceptor) {
+    //解析Interceptor上@Intercepts注解得到的signature信息
     Map<Class<?>, Set<Method>> signatureMap = getSignatureMap(interceptor);
-    Class<?> type = target.getClass();
-    Class<?>[] interfaces = getAllInterfaces(type, signatureMap);
+    Class<?> type = target.getClass();//获取目标对象的类型
+    Class<?>[] interfaces = getAllInterfaces(type, signatureMap); //获取目标对象实现的接口
     if (interfaces.length > 0) {
+      //jdk方式生成动态代理对象
       return Proxy.newProxyInstance(
           type.getClassLoader(),
           interfaces,
@@ -52,15 +56,16 @@ public class Plugin implements InvocationHandler {
     }
     return target;
   }
-
+  /**增强方法**/
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     try {
-      Set<Method> methods = signatureMap.get(method.getDeclaringClass());
-      if (methods != null && methods.contains(method)) {
+      Set<Method> methods = signatureMap.get(method.getDeclaringClass()); //获取方法签名里标记的方法
+      if (methods != null && methods.contains(method)) { //如果需要被拦截
+        //由插件的拦截器来决定原方法的执行时机
         return interceptor.intercept(new Invocation(target, method, args));
       }
-      return method.invoke(target, args);
+      return method.invoke(target, args); //放行调用
     } catch (Exception e) {
       throw ExceptionUtil.unwrapThrowable(e);
     }

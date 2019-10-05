@@ -25,31 +25,31 @@ import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.session.ResultHandler;
 
-/**
+/** Executor实现的基础，功能包括创建Statement对象，为sql语句绑定参数，执行增删改查sql语句，将结果集映射成pojo
  * @author Clinton Begin
  */
 public interface StatementHandler {
-
+  //从connection中获取一个statement
   Statement prepare(Connection connection, Integer transactionTimeout)
       throws SQLException;
-
+  //占位符处理，绑定statement执行时需要的参数
   void parameterize(Statement statement)
       throws SQLException;
-
+  //批量执行sql语句
   void batch(Statement statement)
       throws SQLException;
-
+  //执行update、insert、delete语句
   int update(Statement statement)
       throws SQLException;
-
+  //执行select语句
   <E> List<E> query(Statement statement, ResultHandler resultHandler)
       throws SQLException;
 
   <E> Cursor<E> queryCursor(Statement statement)
       throws SQLException;
-
+  //获取sql语句
   BoundSql getBoundSql();
-
+  //获取封装的参数处理器
   ParameterHandler getParameterHandler();
 
 }

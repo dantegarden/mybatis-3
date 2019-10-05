@@ -33,21 +33,25 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
-/**
+/** 模板模式 定义了一个流程，具体留给子类实现
  * @author Clinton Begin
  */
 public abstract class BaseStatementHandler implements StatementHandler {
 
-  protected final Configuration configuration;
+  protected final Configuration configuration; //所引用的configuration
   protected final ObjectFactory objectFactory;
   protected final TypeHandlerRegistry typeHandlerRegistry;
+  //结果处理器，对数据库返回的结果集（ResultSet）进行封装，返回用户指定的pojo
   protected final ResultSetHandler resultSetHandler;
+  //sql占位符处理器，对PreparedStatement进行参数设置
   protected final ParameterHandler parameterHandler;
-
+  //记录执行语句的executor对象
   protected final Executor executor;
+  //sql语句对应的mappedStatement
   protected final MappedStatement mappedStatement;
+  //分页信息
   protected final RowBounds rowBounds;
-
+  //sql语句
   protected BoundSql boundSql;
 
   protected BaseStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
@@ -86,7 +90,7 @@ public abstract class BaseStatementHandler implements StatementHandler {
     ErrorContext.instance().sql(boundSql.getSql());
     Statement statement = null;
     try {
-      //通过不同的子类实例化不同的Statement，分为三类simple、prepare、callable
+      //通过不同的子类实例化不同的Statement，抽象方法，留个子类实现，分为三类simple、prepare（默认）、callable
       statement = instantiateStatement(connection);
       //设置执行sql的超时时间
       setStatementTimeout(statement, transactionTimeout);
